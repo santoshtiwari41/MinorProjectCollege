@@ -1,0 +1,25 @@
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# Dependency directories
+admin/node_modules/
+user/node_modules/
+api/node_modules/
+
+# Build directories
+admin/build/
+user/build/
+api/build/
+
+# .env files
+admin/.env
+user/.env
+api/.env
+
+# Others
+.DS_Store

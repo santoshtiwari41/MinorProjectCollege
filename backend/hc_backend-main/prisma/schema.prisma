@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Department {
+  id   Int    @id @default(autoincrement())
+  name String @unique
+  code Int    @unique
+
+  hodId         Int?
+  hod           Teacher?       @relation(fields: [hodId], references: [id], onDelete: Cascade)
+  batches       Batch[]
+//  events        Event[]
+  notifications Notification[]
+
+  @@index([code])
+}
+
+model Batch {
+  id        Int    @id @default(autoincrement())
+  name      String
+  startYear Int
+  endYear   Int
+
+  departmentId  Int
+  department    Department     @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  students      Student[]
+  notifications Notification[]
+
+  @@index([departmentId])
+  @@index([startYear])
+}
+
+model Teacher {
+  id         Int       @id @default(autoincrement())
+  email      String    @unique
+  name       String
+  password   String
+  phone      String?
+  fcmToken   String?
+  otp        Int?
+  expiryTime DateTime?
+
+  profileId     Int?           @unique
+  profile       Profile?       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+  departments   Department[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([profileId])
+}
+
+model Student {
+  id         Int       @id @default(autoincrement())
+  crn        Int       @unique
+  name       String
+  email      String    @unique
+  password   String
+  phone      String?
+  fcmToken   String?
+  otp        Int?
+  expiryTime DateTime?
+
+  profileId     Int?           @unique
+  profile       Profile?       @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  batchId       Int
+  batch         Batch          @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  notifications Notification[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email, crn])
+  @@index([batchId])
+  @@index([profileId])
+}
+
+model Profile {
+  id        Int      @id @default(autoincrement())
+  image     String?
+  student   Student?
+  teacher   Teacher?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Notification {
+  id    Int              @id @default(autoincrement())
+  title String
+  body  String
+  image String?
+  type  NotificationType @default(COLLEGE)
+  scheduledTime DateTime @default(now())
+
+  studentId    Int?
+  student      Student?    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  teacherId    Int?
+  teacher      Teacher?    @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  batchId      Int?
+  batch        Batch?      @relation(fields: [batchId], references: [id], onDelete: Cascade)
+  departmentId Int?
+  department   Department? @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([studentId, teacherId, batchId, departmentId])
+}
+
+model Event {
+  id           Int        @id @default(autoincrement())
+  title        String
+  description  String?
+  startTime    DateTime
+  endTime      DateTime
+  holiday      Boolean @default(false)
+//  departmentId Int
+//  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+
+//  @@index([departmentId])
+}
+
+enum NotificationType {
+  COLLEGE
+  UNIVERSITY
+  INDIVIDUAL
+  BATCH
+  DEPARTMENT
+}
