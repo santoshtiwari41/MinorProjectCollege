@@ -39,9 +39,9 @@ const[error,setError]=useState('')
     onSuccess: async (data) => {
      
       const value = data.data.accessToken;
-      await storeData(value);  // Store token immediately after login
+      await storeData(value); 
       await setId(value)
-      router.replace('/(app)/home');
+      router.replace('/ButtomTab/home');
     },
     onError: (error) => {
       console.log('error occurs in login ' + error);
@@ -49,8 +49,8 @@ const[error,setError]=useState('')
   });
 
   const handleLogin = async () => {
-    if (email === "admin" && password === "admin@123") {
-      router.replace("/(admin)/students");
+    if (email === "" && password === "") {
+      console.warn('please fill all data')
     } else {
       loginMutation.mutate({
         email,

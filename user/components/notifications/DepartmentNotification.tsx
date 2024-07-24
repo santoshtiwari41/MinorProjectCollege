@@ -38,7 +38,7 @@ const DepartmentNotification = () => {
   const handlePress = (item: Notification) => {
     console.log('this is from department notification', departmentId);
     router.push({
-      pathname: `/notification/${item.id}`,
+      pathname: `/ButtomTab/notification/${item.id}`,
       params: { title: item.title, description: item.body, imageUrl: item.image },
     });
   };

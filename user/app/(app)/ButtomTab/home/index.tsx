@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
-  Dimensions,
 } from "react-native";
 import { Image } from "react-native";
 import { Asset } from "expo-asset";
@@ -24,10 +23,9 @@ import {
 import { Colors } from "@/constants/Colors";
 import { getUserId } from "@/services/asyncStorage";
 import { useDispatch } from "react-redux";
-import MyCarousel from "@/components/Carousel";
-import Items from "@/components/home/Items";
-const { width: viewportWidth } = Dimensions.get("window");
 
+import Items from "@/components/home/Items";
+import Carousle from "@/components/home/carousle";
 
 const HomeScreen: React.FC = () => {
   const logo = Asset.fromModule(require("../../../../assets/images/logo3.png"));
@@ -158,7 +156,7 @@ const HomeScreen: React.FC = () => {
         </View>
       </View>
       <View style={styles.carousel}>
-       {/* <MyCarousel /> */}
+       <Carousle />
       </View>
       <View style={styles.contents}>
         <Items />
@@ -230,12 +228,9 @@ const styles = StyleSheet.create({
     color: "white",
   },
   carousel: {
-    flex: 1,
-
+    flex: 1,  
     justifyContent: "center",
     alignItems: "center",
-    // marginLeft:10,
-    // marginRight:10
   },
   contents: {
     flex: 2,
