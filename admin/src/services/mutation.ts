@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createBatch, sendNotificationAll, sendNotificationBatch, sendNotificationDepartment, studentRegister } from './api';
+import { createBatch, sendCalendarEvent, sendNotificationAll, sendNotificationBatch, sendNotificationDepartment, studentRegister } from './api';
 
 export const useCreateBatch = () => {
   const queryClient = useQueryClient();
@@ -64,3 +64,17 @@ export const useNotificationAll=()=>{
     },
   });
 }
+
+export const useCreateEvent=()=>{
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: sendCalendarEvent,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['events'] });
+    },
+    onError: () => {
+      console.log('error occurs while sending notification all...');
+    },
+  });
+}
+

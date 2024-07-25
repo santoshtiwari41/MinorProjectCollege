@@ -1,13 +1,24 @@
+import { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
+import AddBatchPopup from '../components/calendar/addCalendar';
+import { Navigate, useNavigate } from 'react-router-dom';
 
-const Calendar = () => {
+const AddCalendar = () => {
+  const navigate=useNavigate()
+  const [isPopupOpen, setIsPopupOpen] = useState<boolean>(false);
   return (
     <DefaultLayout>
       <Breadcrumb pageName="Calendar" />
 
       {/* <!-- ====== Calendar Section Start ====== --> */}
       <div className="w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+      <button
+          onClick={() =>navigate('/calendar/event')}
+          className="bg-blue-500 text-white px-4 py-2 rounded"
+        >
+          Add Event
+        </button>
         <table className="w-full">
           <thead>
             <tr className="grid grid-cols-7 rounded-t-sm bg-primary text-white">
@@ -132,8 +143,7 @@ const Calendar = () => {
                 </span>
               </td>
             </tr>
-            {/* <!-- Line 2 --> */}
-            {/* <!-- Line 3 --> */}
+           
             <tr className="grid grid-cols-7">
               <td className="ease relative h-20 cursor-pointer border border-stroke p-2 transition duration-500 hover:bg-gray dark:border-strokedark dark:hover:bg-meta-4 md:h-25 md:p-6 xl:h-31">
                 <span className="font-medium text-black dark:text-white">
@@ -265,10 +275,12 @@ const Calendar = () => {
             {/* <!-- Line 5 --> */}
           </tbody>
         </table>
+        <AddBatchPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
+   
       </div>
-      {/* <!-- ====== Calendar Section End ====== --> */}
+     
     </DefaultLayout>
   );
 };
 
-export default Calendar;
+export default AddCalendar;

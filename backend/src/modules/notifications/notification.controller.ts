@@ -3,6 +3,8 @@ import { parseISO } from 'date-fns';
 import prisma from "../../configs/database";
 import { sendNotification } from "./notification.services";
 import { uploadOnCloudinary } from "../../configs/cloudinary";
+import scheduleNotification from "../../helpers/scheduleNotification";
+const expoPushToken = "ExponentPushToken[ihIy8UIeJfEf9Be-N75Pm7]";
 
 class NotificationController {
   sendNotification = async (
@@ -13,9 +15,15 @@ class NotificationController {
     const { title, body, type, scheduledTime, batchId, departmentId, file } = req.body;
     const batchID = parseInt(batchId);
     const depart = parseInt(departmentId);
-    const formattedTime = parseISO(scheduledTime);
-    
+    const notificationTime = scheduledTime + ':00.000Z';
+    const notificationTimes = new Date(notificationTime);
     let image;
+
+    const scheduleTime = new Date(Date.now() + 3 * 1000);
+    const data = {
+      image: 'file',
+      type: type
+    };
 
     try {
       if (file) {
@@ -31,15 +39,18 @@ class NotificationController {
           batchId: batchID,
           departmentId: depart,
           image,
-          scheduledTime: formattedTime,
+          scheduledTime: notificationTimes,
         },
       });
 
       await sendNotification(type, title, body, +batchId, +departmentId);
-      res.json({ message: "SUCCESS" });
+
+      scheduleNotification(title, body, data, scheduleTime, expoPushToken);
+
+      return res.json({ message: "SUCCESS" });
     } catch (error) {
       console.error("Error creating notification:", error);
-      res.status(500).json({ error: "Failed to create notification" });
+      return res.status(500).json({ error: "Failed to create notification" });
     }
   };
 
@@ -78,11 +89,11 @@ class NotificationController {
     res: Response,
     next: NextFunction
   ) => {
-    const userId = parseInt(req.query.userId as string); 
-  
+    const userId = parseInt(req.query.userId as string);
+
     const notifications = await prisma.notification.findMany({
       where: {
-        type: 'COLLEGE', 
+        type: 'COLLEGE',
       },
       select: {
         id: true,

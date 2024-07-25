@@ -1,45 +1,36 @@
 import { useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useNotificationBatch } from '../../services/mutation';
+import { useNavigate } from 'react-router-dom';
+import { useCreateEvent } from '../../services/mutation';
 
-function BatchNotification() {
+function Event() {
   const navigate = useNavigate();
-  const { batchId } = useParams<{ batchId: string }>();
+  
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
   const [scheduleDate, setScheduleDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
+  const [holiday, setHoliday] = useState<boolean>(false);
   const [file, setFile] = useState<File | null>(null);
-  const notificationBatch = useNotificationBatch();
 
-  const handleSave = async (e: React.FormEvent) => {
-    
+  const createEvent = useCreateEvent();
+  
+  const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (file) {
-      if (typeof batchId === 'string') {
-        notificationBatch.mutate({
-          type: "BATCH",
-          batchId: batchId,
-          title,
-          body: description,
-          scheduledTime: scheduleDate,
-          file
-        });
-      }
-    }
-   
+     
+    createEvent.mutate({
+      title: title,
+      startTime: scheduleDate,
+      endTime: endDate,
+      description: description,
+      holiday: holiday
+    });
+        
     setTitle('');
     setDescription('');
     setScheduleDate('');
-    setFile(null);
-  };
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setFile(reader.result as File);
-    };
-    reader.readAsDataURL(e.target.files[0]);
+    setEndDate('');
+    setHoliday(false);
   };
 
   const handleCancel = () => {
@@ -48,10 +39,10 @@ function BatchNotification() {
 
   return (
     <DefaultLayout>
-      <div className="mt-1 ml-10 fixed inset-0 overflow-y-auto flex items-center justify-center z-50 bg-gray-800 bg-opacity-75 dark:border-strokedark dark:bg-boxdark">
+      <div className="dark:border-strokedark dark:bg-boxdark mt-1 ml-10 fixed inset-0 overflow-y-auto flex items-center justify-center z-50 bg-gray-800 bg-opacity-75">
         <form
           onSubmit={handleSave}
-          className="bg-white dark:bg-boxdark bg-white dark:bg-gray-900 p-8 rounded-lg shadow-lg w-full max-w-2xl relative"
+          className="dark:border-strokedark dark:bg-boxdark bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl relative"
         >
           <button
             onClick={handleCancel}
@@ -69,7 +60,7 @@ function BatchNotification() {
           </button>
 
           <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
-            Add Notification
+            Add Events
           </h2>
 
           <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
@@ -96,16 +87,51 @@ function BatchNotification() {
                 htmlFor="scheduleDate"
                 className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Schedule Date and Time
+                Start Date
               </label>
               <input
                 id="scheduleDate"
                 name="scheduleDate"
-                type="datetime-local"
+                type="text"
                 value={scheduleDate}
                 required
                 onChange={(e) => setScheduleDate(e.target.value)}
                 className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="endDate"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                End Date
+              </label>
+              <input
+                id="endDate"
+                name="endDate"
+                type="text"
+                value={endDate}
+                required
+                onChange={(e) => setEndDate(e.target.value)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="holiday"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Holiday
+              </label>
+              <input
+                id="holiday"
+                name="holiday"
+                type="checkbox"
+                checked={holiday}
+                onChange={(e) => setHoliday(e.target.checked)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
               />
             </div>
 
@@ -127,17 +153,6 @@ function BatchNotification() {
                 className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
               />
             </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Attach File
-              </label>
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 file:mr-4 file:rounded file:border-none file:bg-gray-200 dark:file:bg-gray-700 file:py-2 file:px-4 file:text-sm file:text-gray-700 dark:file:text-gray-200"
-              />
-            </div>
           </div>
 
           <div className="flex justify-center mt-6">
@@ -145,7 +160,7 @@ function BatchNotification() {
               type="submit"
               className="py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
             >
-              Add Notification
+              Add Event
             </button>
           </div>
         </form>
@@ -154,4 +169,4 @@ function BatchNotification() {
   );
 }
 
-export default BatchNotification;
+export default Event;

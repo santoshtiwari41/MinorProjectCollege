@@ -23,7 +23,7 @@ import {
 import { Colors } from "@/constants/Colors";
 import { getUserId } from "@/services/asyncStorage";
 import { useDispatch } from "react-redux";
-
+import notificationServices from "@/services/notificationServices";
 import Items from "@/components/home/Items";
 import Carousle from "@/components/home/carousle";
 
@@ -33,8 +33,9 @@ const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
   const [userInitials, setUserInitials] = useState<string>("");
   const [greeting, setGreeting] = useState<string>("");
-
+  notificationServices()
   useEffect(() => {
+    
     const fetchUserId = async () => {
       const data = await getUserId();
       if (typeof data === "string") {
