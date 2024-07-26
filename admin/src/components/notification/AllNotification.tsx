@@ -82,7 +82,7 @@ function AllNotification() {
             <input
               id="scheduleDate"
               name="scheduleDate"
-              type="date"
+              type="datetime-local"
               value={scheduleDate}
               required
               onChange={(e) => setScheduleDate(e.target.value)}

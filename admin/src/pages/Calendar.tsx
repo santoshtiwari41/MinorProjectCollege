@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Breadcrumb from '../components/Breadcrumbs/Breadcrumb';
 import DefaultLayout from '../layout/DefaultLayout';
-import AddBatchPopup from '../components/calendar/addCalendar';
-import { Navigate, useNavigate } from 'react-router-dom';
+import AddBatchPopup from '../components/calendar/AddCalendar';
+import {useNavigate } from 'react-router-dom';
 
 const AddCalendar = () => {
   const navigate=useNavigate()
