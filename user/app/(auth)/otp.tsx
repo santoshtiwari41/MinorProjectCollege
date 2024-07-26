@@ -6,6 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import OtpImage from "@/data/otpImage";
 import { Ionicons } from "@expo/vector-icons";
 import ButtonComponent from "@/components/Button";
@@ -14,6 +18,8 @@ import { useMutation } from "@tanstack/react-query";
 import { verifyOtp } from "@/services/api";
 
 const Otp: React.FC = () => {
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const { email } = useLocalSearchParams();
   const router = useRouter();
   const firstInput = useRef<TextInput>(null);
@@ -34,27 +40,35 @@ const Otp: React.FC = () => {
 
   const [otpp, setOtp] = useState({ 1: "", 2: "", 3: "", 4: "", 5: "", 6: "" });
   const [allOtp, setAllOtp] = useState(false);
-  
+
   const enteredOtp = Object.values(otpp).join("");
   const otpMutation = useMutation({
     mutationFn: verifyOtp,
-  });
-
-  useEffect(() => {
-    if (otpMutation.error) {
-      console.log(otpMutation.error.message);
+    onError: (error) => {
+      console.log(error.message);
       setOtp({ 1: "", 2: "", 3: "", 4: "", 5: "", 6: "" });
-      setAllOtp(false);
-    }
-    if (otpMutation.isSuccess) {
+      setAllOtp(true);
+      setError(true);
+      setErrorMessage("Invalid OTP");
+    },
+    onSuccess: () => {
+      setError(false);
+      setErrorMessage("");
       router.push({
         pathname: `/(auth)/changePassword`,
         params: { email },
       });
-    }
-  }, [otpMutation.error, otpMutation.isSuccess, router, email]);
+    },
+  });
 
   const handleOtp = () => {
+    if (Object.values(otpp).some((value) => value === "")) {
+      setAllOtp(true);
+      setError(true);
+      setErrorMessage("Please enter all OTP digits");
+      return;
+    }
+    setAllOtp(false);
     otpMutation.mutate({
       otp: enteredOtp,
     });
@@ -68,7 +82,13 @@ const Otp: React.FC = () => {
       <View style={styles.svg}>
         <OtpImage />
       </View>
-      <Text style={styles.content}>Enter the OTP number just sent you</Text>
+      
+      <Text style={styles.content}>Enter the OTP number just sent to you</Text>
+      {error && (
+            <View style={{ width: wp('90%'), height: hp('3%'),}}>
+              <Text style={{ textAlign: 'center', color: 'red', fontFamily: 'Nunito-ExtraBold', }}>{errorMessage}</Text>
+            </View>
+          )}
       <View style={styles.otpContainer}>
         {inputRefs.map((inputRef, index) => (
           <View key={index} style={styles.otpBox}>
@@ -85,18 +105,15 @@ const Otp: React.FC = () => {
                   const nextInputRef = inputRefs[index + 1];
                   nextInputRef?.current?.focus();
                 } else if (text && index === 5) {
-                  const nextInputRef = inputRefs[index + 1];
+                  inputRef.current?.blur();
                 }
               }}
             />
           </View>
         ))}
       </View>
-      {allOtp && (
-        <Text style={{ textAlign: "center", marginLeft: -50 }}>
-          Please enter all otp
-        </Text>
-      )}
+      
+      
       <TouchableOpacity onPress={handleOtp} style={{ alignItems: "center" }}>
         <ButtonComponent title="Verify" />
       </TouchableOpacity>

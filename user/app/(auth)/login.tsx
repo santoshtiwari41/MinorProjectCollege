@@ -12,34 +12,43 @@ import { useRouter } from "expo-router";
 import Button from "@/components/Button";
 import InputField from "@/components/InputField";
 import PasswordField from "@/components/PasswordField";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from "react-native-responsive-screen";
+import {
+  widthPercentageToDP as wp,
+  heightPercentageToDP as hp,
+} from "react-native-responsive-screen";
 import Animated from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useMutation } from "@tanstack/react-query";
 import { studentLogin } from "@/services/api";
-import { getFcmToken, getUserId, setId, storeData } from "@/services/asyncStorage";
+import {
+  getFcmToken,
+  getUserId,
+  setId,
+  storeData,
+} from "@/services/asyncStorage";
 import notificationServices from "@/services/notificationServices";
 
-interface LogInProps{}
+interface LogInProps {}
 const LogIn: React.FC<LogInProps> = () => {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
- 
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberMe, setRememberMe] = useState<boolean>(false);
-  // for Expo push token
-  notificationServices()
+  const [error, setError] = useState<boolean>("false");
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // get token 
+  notificationServices();
+
   useEffect(() => {
     const fetchToken = async () => {
       const token = await getFcmToken();
       setExpoPushToken(token);
-      console.log('expo token', token);
+      console.log("expo token", token);
     };
     fetchToken();
   }, []);
-const[error,setError]=useState('')
+  
   const router = useRouter();
   const handleForgotPassword = () => {
     router.push("/forgotPassword");
@@ -52,30 +61,33 @@ const[error,setError]=useState('')
   const loginMutation = useMutation({
     mutationFn: studentLogin,
     onSuccess: async (data) => {
-     
       const value = data.data.accessToken;
-      await storeData(value); 
-      await setId(value)
-      router.replace('/ButtomTab/home');
+      await storeData(value);
+      await setId(value);
+      setError(false);
+      setErrorMessage("");
+      router.replace("/ButtomTab/home");
     },
     onError: (error) => {
-      console.log('error occurs in login ' + error);
+      setError(true);
+      setErrorMessage("Invalid username or password !")
+      
     },
   });
 
   const handleLogin = async () => {
-    if(expoPushToken!=null) {
+    if (expoPushToken != null) {
       if (email === "" && password === "") {
-        console.warn('please fill all data')
+        setError(true);
+        setErrorMessage("All Fields are required !")
       } else {
         loginMutation.mutate({
           email,
           password,
-          expoPushToken
+          expoPushToken,
         });
       }
     }
-    
 
     if (loginMutation.isPending) {
       return <Text>Loading...</Text>;
@@ -109,7 +121,11 @@ const[error,setError]=useState('')
             <Text style={styles.title}>Welcome to Hamro College!</Text>
             <LoginImage />
           </View>
-
+          {error && (
+            <View style={{width:wp('90%'),height:hp('3%'),marginBottom:-20}}>
+              <Text style={{textAlign:'center',color:'red',fontFamily:'Nunito-ExtraBold'}}>{errorMessage}</Text>
+            </View>
+          )}
           <InputField
             icon="mail"
             placeholder="Enter  Email"

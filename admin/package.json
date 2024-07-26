@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@headlessui/react": "^2.0.4",
+    "@heroicons/react": "^2.1.5",
     "@reduxjs/toolkit": "^2.2.5",
     "@tanstack/react-query": "^5.45.1",
     "apexcharts": "^3.41.0",
@@ -22,6 +23,7 @@
     "body-parser": "^1.20.2",
     "date-fns": "^3.6.0",
     "flatpickr": "^4.6.13",
+    "framer-motion": "^11.3.17",
     "headlessui": "^0.0.0",
     "jsvectormap": "^1.5.3",
     "match-sorter": "^6.3.1",

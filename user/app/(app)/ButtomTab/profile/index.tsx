@@ -2,14 +2,17 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native';
 import { Title, Caption, Divider, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
-import { FontAwesome } from '@expo/vector-icons'; 
+import { MaterialIcons } from '@expo/vector-icons'; 
 import { useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { removeData } from '@/services/asyncStorage';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-
+import { Asset } from 'expo-asset';
 import { RootState } from '@/redux/store';
 import { Colors } from '@/constants/Colors';
+
+// Static image asset
+const staticimg = Asset.fromModule(require("../../../../assets/images/placeholder.png")).uri;
 
 const ProfileScreen: React.FC = () => {
   const { profile } = useSelector((state: RootState) => state.profile);
@@ -45,15 +48,14 @@ const ProfileScreen: React.FC = () => {
       <View style={{ backgroundColor: Colors.button, height: hp('5%') }}></View>
       <View style={styles.header}>
         <TouchableOpacity onPress={selectImage}>
-          <View style={styles.imageContainer}>
-            {imageUri ? (
-              <Image source={{ uri: imageUri }} style={styles.image} />
-            ) : (
-              <View style={styles.placeholder}>
-                <FontAwesome name="camera" size={40} color="#FFF" />
-                <Text style={styles.placeholderText}>Select Image</Text>
-              </View>
-            )}
+           <View style={styles.imageContainer}>
+              {imageUri ? (
+                <Image source={{ uri: imageUri }} style={styles.image} />
+              ) : (
+                <Image source={{ uri: staticimg }} style={styles.image} />
+              )}
+              <MaterialIcons name="photo-camera" size={50} color="#FFF" style={styles.camera} />
+         
           </View>
         </TouchableOpacity>
         <Title style={styles.title}>{profile?.name || 'Loading...'}</Title>
@@ -85,7 +87,7 @@ const ProfileScreen: React.FC = () => {
         <Button
           mode="outlined"
           style={[styles.button, { borderColor: '#4e247d' }]}
-          onPress={() => router.push('/(app)/ButtomTab/profile/changePassword')}
+          onPress={() => router.push('/(app)/Stack/changePassword')}
         >
           Change Password
         </Button>
@@ -140,6 +142,10 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     paddingHorizontal: 20,
   },
+  camera:{
+    bottom:hp('8%'),
+    left:wp('14%'),
+  },
   profileInfoRow: {
     flexDirection: 'row',
     marginBottom: 15,
@@ -150,11 +156,11 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'Nunito-Bold',
     fontSize: 14,
-    width: wp('30%'), 
+    width: wp('30%'),
   },
   valueContainer: {
-    flex: 1, 
-    marginLeft: 10, 
+    flex: 1,
+    marginLeft: 10,
   },
   value: {
     color: '#555',
@@ -186,6 +192,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 75,
+    position: 'relative',
+  },
+  cameraIcon: {
+    position: 'absolute',
+    top: hp('10%'), 
+    right: -wp('5%'), 
   },
   placeholderText: {
     color: '#FFF',
