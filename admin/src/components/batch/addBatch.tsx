@@ -33,7 +33,7 @@ const AddBatchPopup: React.FC<AddBatchPopupProps> = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <DefaultLayout>
+    
        <div className="fixed mt-13 inset-0 overflow-y-auto flex items-center justify-center z-100 dark:bg-boxdark">
       <div className="relative bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
         <button
@@ -117,7 +117,7 @@ const AddBatchPopup: React.FC<AddBatchPopupProps> = ({ isOpen, onClose }) => {
         </form>
       </div>
     </div>
-    </DefaultLayout>
+    
    
   );
 };
