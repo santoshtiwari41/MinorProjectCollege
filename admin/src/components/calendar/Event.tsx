@@ -39,7 +39,7 @@ function Event() {
 
   return (
     <DefaultLayout>
-      <div className="dark:border-strokedark dark:bg-boxdark mt-1 ml-10 fixed inset-0 overflow-y-auto flex items-center justify-center z-50 bg-gray-800 bg-opacity-75">
+      <div className=" justify-center align-center dark:border-strokedark dark:bg-boxdark mt-1 ml-10 fixed inset-0 overflow-y-auto flex items-center justify-center z-50 bg-gray-800 bg-opacity-75">
         <form
           onSubmit={handleSave}
           className="dark:border-strokedark dark:bg-boxdark bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl relative"
