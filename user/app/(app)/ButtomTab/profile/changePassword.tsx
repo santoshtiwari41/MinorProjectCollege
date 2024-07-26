@@ -6,16 +6,18 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
 } from "react-native";
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
-import { useRouter } from "expo-router";
 import Button from "@/components/Button";
 import PasswordField from "@/components/PasswordField";
 import Animated from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useMutation } from "@tanstack/react-query";
 import { changePassword} from "@/services/api";
-import { useLocalSearchParams } from "expo-router";
+
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { Ionicons } from "@expo/vector-icons";
+import { Colors } from "@/constants/Colors";
 const LogIn = () => {
   const [password, setPassword] = useState<string>("");
   const [cpassword, setCPassword] = useState<string>("");
@@ -48,16 +50,22 @@ const handleChangePassword = () => {
 //   if (changePasswordMutation.isPending) {
 //     return <Text>Loading...</Text>;
 //   }
+const back = () => {
+  router.back();
+};
 
   return (
     <Animated.View style={{ flex: 1, backgroundColor: "#E2E2E2" }}>
-      <StatusBar style="dark" />
+      <View style={{backgroundColor:Colors.button,height:hp('7%')}}></View>
+     <View style={styles.header}>
+        <TouchableOpacity onPress={back}>
+          <Ionicons name="arrow-back" size={30} color="#1A162B" />
+        </TouchableOpacity>
+        
+      </View>
       <View  style={{
               alignItems: "center",
               justifyContent:'center',
-              marginBottom: hp("1%"),
-             paddingTop:hp('12%')
-             
             }} >
         <Text style={styles.title}>Change your Password</Text></View>
           <View style={styles.container}>
@@ -90,11 +98,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     gap:hp('4%'),
-    padding: 20,
+   
   },
   buttonContainer: {
     marginTop: 20,
+  },header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: wp('3%'),
+   marginTop:10
   },
+  
+
   title:{
     
     alignItems:'center',

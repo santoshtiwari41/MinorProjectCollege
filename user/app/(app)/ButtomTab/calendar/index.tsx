@@ -9,13 +9,16 @@ import { Colors } from '@/constants/Colors';
 const CustomCalendar = () => {
  
   return (
-      <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} >
-       <View style={{backgroundColor:'red',height:50}}>
-
-       </View>
+    <View style={{flex:1}}>
+      <View style={{height:hp('9%'),backgroundColor:Colors.button,}}></View>
+     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false} >
+     
        <Calendar/>
        <EventList />
-  </ScrollView>
+     </ScrollView>
+</View>
+   
+     
 
     
   );
@@ -25,7 +28,7 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     alignItems: 'center',
-   backgroundColor:'#E2E2E2',
+    backgroundColor:'#E2E2E2',
   
   },
 });

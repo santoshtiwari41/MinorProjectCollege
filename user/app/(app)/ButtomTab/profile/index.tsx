@@ -1,21 +1,22 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Image, ActivityIndicator, ScrollView } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text, Image, ScrollView } from 'react-native';
 import { Title, Caption, Divider, Button } from 'react-native-paper';
 import * as ImagePicker from 'expo-image-picker';
 import { FontAwesome } from '@expo/vector-icons'; 
 import { useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
 import { removeData } from '@/services/asyncStorage';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 import { RootState } from '@/redux/store';
+import { Colors } from '@/constants/Colors';
+
 const ProfileScreen: React.FC = () => {
-  
-  const {  batchId, departmentId,profile,userId} = useSelector((state: RootState) => state.profile);
-  
+  const { profile } = useSelector((state: RootState) => state.profile);
   const [imageUri, setImageUri] = useState<string>("");
 
   const router = useRouter();
-  
+
   const selectImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -30,7 +31,7 @@ const ProfileScreen: React.FC = () => {
     });
 
     if (!result.cancelled) {
-      setImageUri(result.uri);
+      setImageUri(result.uri); // Set the image URI
     }
   };
 
@@ -39,15 +40,14 @@ const ProfileScreen: React.FC = () => {
     router.replace('/(auth)/login');
   };
 
- 
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <View style={{ backgroundColor: Colors.button, height: hp('5%') }}></View>
       <View style={styles.header}>
         <TouchableOpacity onPress={selectImage}>
           <View style={styles.imageContainer}>
             {imageUri ? (
-              <Image key={new Date().getTime()} source={{ uri: imageUri }} style={styles.image} />
+              <Image source={{ uri: imageUri }} style={styles.image} />
             ) : (
               <View style={styles.placeholder}>
                 <FontAwesome name="camera" size={40} color="#FFF" />
@@ -63,44 +63,37 @@ const ProfileScreen: React.FC = () => {
       <Divider style={styles.divider} />
 
       <View style={styles.profileInfoSection}>
-        <View style={styles.profileInfoRow}>
-          <Text style={styles.label}>Student ROLL:</Text>
-          <Text style={styles.value}>{profile?.crn || 'Loading...'}</Text>
-        </View>
-        <View style={styles.profileInfoRow}>
-          <Text style={styles.label}>Email:</Text>
-          <Text style={styles.value}>{profile?.email || 'Loading...'}</Text>
-        </View>
-        <View style={styles.profileInfoRow}>
-          <Text style={styles.label}>Department:</Text>
-          <Text style={styles.value}>{profile?.batch?.department?.name || 'Loading...'}</Text>
-        </View>
-        <View style={styles.profileInfoRow}>
-          <Text style={styles.label}>Year:</Text>
-          <Text style={styles.value}>{profile?.batch?.startYear} - {profile?.batch?.endYear}</Text>
-        </View>
-        <View style={styles.profileInfoRow}>
-          <Text style={styles.label}>Phone:</Text>
-          <Text style={styles.value}>{profile?.phone || 'Loading...'}</Text>
-        </View>
+        {[
+          { label: 'Student ROLL:', value: profile?.crn || 'Loading...' },
+          { label: 'Email:', value: profile?.email || 'Loading...' },
+          { label: 'Department:', value: profile?.batch?.department?.name || 'Loading...' },
+          { label: 'Year:', value: `${profile?.batch?.startYear} - ${profile?.batch?.endYear}` },
+          { label: 'Phone:', value: profile?.phone || 'Loading...' }
+        ].map((item, index) => (
+          <View key={index} style={styles.profileInfoRow}>
+            <Text style={styles.label}>{item.label}</Text>
+            <View style={styles.valueContainer}>
+              <Text style={styles.value}>{item.value}</Text>
+            </View>
+          </View>
+        ))}
       </View>
 
       <Divider style={styles.divider} />
 
       <View style={styles.buttonSection}>
         <Button
-         mode="outlined"
-         
+          mode="outlined"
           style={[styles.button, { borderColor: '#4e247d' }]}
-          onPress={() => router.push('/(app)/profile/changePassword')}
+          onPress={() => router.push('/(app)/ButtomTab/profile/changePassword')}
         >
-          change Password
+          Change Password
         </Button>
         <Button
           mode="outlined"
           labelStyle={{ color: '#8b41e0' }}
           style={[styles.button, { borderColor: '#8b41e0' }]}
-          onPress={() => router.push('/profile/setting')}
+          onPress={() => router.push('/ButtomTab/profile/setting')}
         >
           Settings
         </Button>
@@ -119,22 +112,24 @@ const ProfileScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
     backgroundColor: '#E2E2E2',
-    paddingTop: 50,
   },
   header: {
     alignItems: 'center',
-    marginBottom: 10,
+    backgroundColor: Colors.button,
+    paddingBottom: hp('2%'),
+    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 20
   },
   title: {
-    marginTop: 10,
+    fontFamily: 'Nunito-Bold',
     fontSize: 24,
     fontWeight: 'bold',
   },
   caption: {
     fontSize: 14,
-    color: '#888',
+    color: 'black',
+    fontFamily: 'Nunito-Bold',
   },
   divider: {
     marginVertical: 10, 
@@ -143,32 +138,46 @@ const styles = StyleSheet.create({
   },
   profileInfoSection: {
     marginBottom: 10,
+    paddingHorizontal: 20,
   },
   profileInfoRow: {
     flexDirection: 'row',
-    marginBottom: 15, 
+    marginBottom: 15,
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   label: {
     fontWeight: 'bold',
-    marginRight: 10,
+    fontFamily: 'Nunito-Bold',
+    fontSize: 14,
+    width: wp('30%'), 
+  },
+  valueContainer: {
+    flex: 1, 
+    marginLeft: 10, 
   },
   value: {
     color: '#555',
+    fontFamily: 'Nunito-Bold',
+    fontSize: 14,
   },
   buttonSection: {
     marginTop: 20,
+    paddingHorizontal: 20,
   },
   button: {
     marginBottom: 10,
   },
   imageContainer: {
-    marginBottom: 20,
+    marginBottom: 10,
     alignItems: 'center',
   },
   image: {
     width: 150,
     height: 150,
     borderRadius: 75,
+    borderWidth: 2,
+    borderColor: '#ddd',
   },
   placeholder: {
     backgroundColor: 'grey',

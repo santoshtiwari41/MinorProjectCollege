@@ -67,7 +67,7 @@ const EventList: React.FC = () => {
   const handlePress = (event: Event) => {
     const { id, date, title, description } = event;
     router.push({
-      pathname: `/calendar/${id}`,
+      pathname: `/Stack/${id}`,
       params: { date, title, description },
     });
   };
