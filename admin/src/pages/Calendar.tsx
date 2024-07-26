@@ -106,8 +106,7 @@ const AddCalendar = () => {
         {renderHeader()}
         {renderDays()}
         {renderCells()}
-        <AddBatchPopup isOpen={isPopupOpen} onClose={() => setIsPopupOpen(false)} />
-      </div>
+         </div>
     </DefaultLayout>
   );
 };

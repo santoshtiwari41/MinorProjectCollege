@@ -1,43 +1,51 @@
-import React, { useState } from 'react';
-import { useCreateBatch } from '../../services/mutation';
+import { useState } from 'react';
 import DefaultLayout from '../../layout/DefaultLayout';
+import { useNavigate } from 'react-router-dom';
+import { useCreateEvent } from '../../services/mutation';
 
-interface AddBatchPopupProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
-
-const AddBatchPopup: React.FC<AddBatchPopupProps> = ({ isOpen, onClose }) => {
-  const createBatch = useCreateBatch();
-  const [batchName, setBatchName] = useState<string>('');
-  const [startYear, setStartYear] = useState<string>('');
-  const [endDate, setEndDate] = useState<string>('');
+function Event() {
+  const navigate = useNavigate();
+  
+  const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
+  const [scheduleDate, setScheduleDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
   const [holiday, setHoliday] = useState<boolean>(false);
-  const [departmentId, setDepartmentId] = useState<string>('');
+  const [file, setFile] = useState<File | null>(null);
 
+  const createEvent = useCreateEvent();
+  
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    createBatch.mutate({
-      name: batchName,
-      startYear: parseInt(startYear, 10),
-      endYear: parseInt(startYear, 10) + 4,
-      departmentId: parseInt(departmentId, 10),
+     
+    createEvent.mutate({
+      title: title,
+      startTime: scheduleDate,
+      endTime: endDate,
+      description: description,
+      holiday: holiday
     });
-    setBatchName('');
-    setDepartmentId('');
-    setStartYear('');
-    onClose();
+        
+    setTitle('');
+    setDescription('');
+    setScheduleDate('');
+    setEndDate('');
+    setHoliday(false);
   };
 
-  if (!isOpen) return null;
+  const handleCancel = () => {
+    navigate(-1);
+  };
 
   return (
     <DefaultLayout>
-      <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-        <div className="relative bg-white rounded-lg shadow-lg max-w-lg w-full p-6">
+      <div className=" justify-center align-center dark:border-strokedark dark:bg-boxdark mt-1 ml-10 fixed inset-0 overflow-y-auto flex items-center justify-center z-50 bg-gray-800 bg-opacity-75">
+        <form
+          onSubmit={handleSave}
+          className="dark:border-strokedark dark:bg-boxdark bg-white p-8 rounded-lg shadow-lg w-full max-w-2xl relative"
+        >
           <button
-            onClick={onClose}
+            onClick={handleCancel}
             className="absolute top-3 right-4 text-gray-500 hover:text-gray-800 focus:outline-none"
           >
             <svg
@@ -50,88 +58,115 @@ const AddBatchPopup: React.FC<AddBatchPopupProps> = ({ isOpen, onClose }) => {
               <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
-          <h2 className="text-2xl font-semibold mb-6">Add Batch</h2>
-          <form onSubmit={handleSave} className="space-y-6">
+
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white mb-6 text-center">
+            Add Events
+          </h2>
+
+          <div className="grid grid-cols-1 gap-10 sm:grid-cols-2">
             <div>
-              <label htmlFor="batchName" className="block text-sm font-medium leading-6 text-gray-900">
+              <label
+                htmlFor="title"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Title
               </label>
-              <div className="mt-2">
-                <input
-                  id="batchName"
-                  name="batchName"
-                  type="text"
-                  value={batchName}
-                  required
-                  onChange={(e) => setBatchName(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
+              <input
+                id="title"
+                name="title"
+                type="text"
+                value={title}
+                required
+                onChange={(e) => setTitle(e.target.value)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
             </div>
 
             <div>
-              <label htmlFor="startYear" className="block text-sm font-medium leading-6 text-gray-900">
-                Start Year
+              <label
+                htmlFor="scheduleDate"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
+                Start Date
               </label>
-              <div className="mt-2">
-                <input
-                  id="startYear"
-                  name="startYear"
-                  type="text"
-                  value={startYear}
-                  required
-                  onChange={(e) => setStartYear(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
+              <input
+                id="scheduleDate"
+                name="scheduleDate"
+                type="text"
+                value={scheduleDate}
+                required
+                onChange={(e) => setScheduleDate(e.target.value)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
             </div>
 
             <div>
-              <label htmlFor="endDate" className="block text-sm font-medium leading-6 text-gray-900">
+              <label
+                htmlFor="endDate"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 End Date
               </label>
-              <div className="mt-2">
-                <input
-                  id="endDate"
-                  name="endDate"
-                  type="text"
-                  value={endDate}
-                  required
-                  onChange={(e) => setEndDate(e.target.value)}
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                />
-              </div>
+              <input
+                id="endDate"
+                name="endDate"
+                type="text"
+                value={endDate}
+                required
+                onChange={(e) => setEndDate(e.target.value)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
             </div>
 
             <div>
-              <label htmlFor="holiday" className="block text-sm font-medium leading-6 text-gray-900">
+              <label
+                htmlFor="holiday"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
+              >
                 Holiday
               </label>
-              <div className="mt-2 flex items-center">
-                <input
-                  id="holiday"
-                  name="holiday"
-                  type="checkbox"
-                  checked={holiday}
-                  onChange={(e) => setHoliday(e.target.checked)}
-                  className="h-4 w-4 border-gray-300 rounded text-blue-600 focus:ring-blue-500"
-                />
-              </div>
+              <input
+                id="holiday"
+                name="holiday"
+                type="checkbox"
+                checked={holiday}
+                onChange={(e) => setHoliday(e.target.checked)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
             </div>
 
-            <div className="flex justify-end">
-              <button
-                type="submit"
-                className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            <div>
+              <label
+                htmlFor="description"
+                className="block text-sm font-medium text-gray-700 dark:text-gray-300"
               >
-                Add
-              </button>
+                Description
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows={3}
+                placeholder="Write notification ..."
+                required
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full mt-2 p-3 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200"
+              />
             </div>
-          </form>
-        </div>
+          </div>
+
+          <div className="flex justify-center mt-6">
+            <button
+              type="submit"
+              className="py-3 px-6 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition ease-in-out duration-150"
+            >
+              Add Event
+            </button>
+          </div>
+        </form>
       </div>
     </DefaultLayout>
   );
-};
+}
 
-export default AddBatchPopup;
+export default Event;
