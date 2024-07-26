@@ -4,7 +4,7 @@ import prisma from "../../configs/database";
 import { sendNotification } from "./notification.services";
 import { uploadOnCloudinary } from "../../configs/cloudinary";
 import scheduleNotification from "../../helpers/scheduleNotification";
-const expoPushToken = "ExponentPushToken[ihIy8UIeJfEf9Be-N75Pm7]";
+import { getTokens } from "../../helpers/getToken";
 
 class NotificationController {
   sendNotification = async (
@@ -19,7 +19,6 @@ class NotificationController {
     const notificationTimes = new Date(notificationTime);
     let image;
 
-    const scheduleTime = new Date(Date.now() + 3 * 1000);
     const data = {
       image: 'file',
       type: type
@@ -30,7 +29,7 @@ class NotificationController {
         const cloudinaryResponse = await uploadOnCloudinary(file, `notification-${Date.now()}.png`);
         image = cloudinaryResponse?.url;
       }
-
+      
       await prisma.notification.create({
         data: {
           type,
@@ -43,9 +42,14 @@ class NotificationController {
         },
       });
 
-      await sendNotification(type, title, body, +batchId, +departmentId);
+      const tokens = await getTokens({ departmentId: depart, batchId: batchID }); 
+      console.log('FCM Tokens:', tokens);
 
-      scheduleNotification(title, body, data, scheduleTime, expoPushToken);
+      if (tokens.length > 0) {
+        for (const token of tokens) {
+          scheduleNotification(title, body, data, notificationTimes, token);
+        }
+      }
 
       return res.json({ message: "SUCCESS" });
     } catch (error) {
