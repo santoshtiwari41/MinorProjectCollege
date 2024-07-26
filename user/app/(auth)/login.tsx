@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -17,13 +17,28 @@ import Animated from "react-native-reanimated";
 import { StatusBar } from "expo-status-bar";
 import { useMutation } from "@tanstack/react-query";
 import { studentLogin } from "@/services/api";
-import { getUserId, setId, storeData } from "@/services/asyncStorage";
+import { getFcmToken, getUserId, setId, storeData } from "@/services/asyncStorage";
+import notificationServices from "@/services/notificationServices";
 
 interface LogInProps{}
 const LogIn: React.FC<LogInProps> = () => {
+  const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
+ 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberMe, setRememberMe] = useState<boolean>(false);
+  // for Expo push token
+  notificationServices()
+
+  // get token 
+  useEffect(() => {
+    const fetchToken = async () => {
+      const token = await getFcmToken();
+      setExpoPushToken(token);
+      console.log('expo token', token);
+    };
+    fetchToken();
+  }, []);
 const[error,setError]=useState('')
   const router = useRouter();
   const handleForgotPassword = () => {
@@ -49,14 +64,18 @@ const[error,setError]=useState('')
   });
 
   const handleLogin = async () => {
-    if (email === "" && password === "") {
-      console.warn('please fill all data')
-    } else {
-      loginMutation.mutate({
-        email,
-        password,
-      });
+    if(expoPushToken!=null) {
+      if (email === "" && password === "") {
+        console.warn('please fill all data')
+      } else {
+        loginMutation.mutate({
+          email,
+          password,
+          expoPushToken
+        });
+      }
     }
+    
 
     if (loginMutation.isPending) {
       return <Text>Loading...</Text>;

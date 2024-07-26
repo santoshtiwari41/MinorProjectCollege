@@ -2,7 +2,7 @@ import {StyleSheet, ScrollView } from 'react-native';
 import React from 'react';
 import EventList from '@/components/eventList';
 import Calendar from '@/components/CalendarComponent'; 
-import Animated from 'react-native-reanimated';
+
 import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 
 const CustomCalendar = () => {

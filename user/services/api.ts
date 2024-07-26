@@ -10,6 +10,7 @@ export interface StudentData {
 export interface Credentials{
   email: string;
   password: string;
+  expoPushToken:string;
 }
 export interface Notification{
   title: string;

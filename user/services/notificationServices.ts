@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Text, View } from 'react-native';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
+import { saveFcmToken } from './asyncStorage';
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
@@ -49,7 +50,8 @@ async function registerForPushNotificationsAsync() {
       return;
     }
     token = (await Notifications.getExpoPushTokenAsync()).data;
-    console.log(token);
+    
+    saveFcmToken(token)
   } else {
     alert('Must use physical device for Push Notifications');
   }

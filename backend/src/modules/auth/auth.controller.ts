@@ -8,14 +8,17 @@ import { generateOtp, generateTokens } from "./auth.services";
 
 class AuthController {
   loginStudent = async (req: Request, res: Response, next: NextFunction) => {
-    const { email, password } = req.body;
+    const { email, password,expoPushToken } = req.body;
 
     const student = await prisma.student.findFirst({ where: { email } });
     if (!student) {
       const error = createHttpError(404, "Student not found");
       return next(error);
     }
-
+    await prisma.student.update({
+      where: { id: student.id },
+      data: { fcmToken: expoPushToken },
+    });
     const isMatch = await bcrypt.compare(password, student.password);
     if (!isMatch) {
       const error = createHttpError(401, "Credentials doesn't match");
