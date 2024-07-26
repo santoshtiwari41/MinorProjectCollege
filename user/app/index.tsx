@@ -2,14 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import { Redirect } from "expo-router";
 import { getData} from "@/services/asyncStorage";
 import { useFocusEffect } from '@react-navigation/native';
-// import registerForPushNotificationsAsync from "@/services/registerForPushNotification";
 
 const Index: React.FC = () => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
-  // useEffect(() => {
-  //   registerForPushNotificationsAsync();
-  // }, []);
-
+ 
   const checkToken = useCallback(async () => {
     try {
      

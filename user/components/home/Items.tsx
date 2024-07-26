@@ -56,7 +56,7 @@ const Items: React.FC = () => {
       <IconSection
         title="Attendance & Administration"
         icons={[
-          { component: FontAwesome as unknown as IconComponentType, name: 'check-square-o', label: 'Attendance', routeName: 'hello' },
+          { component: FontAwesome as unknown as IconComponentType, name: 'check-square-o', label: 'Attendance', routeName: 'Stack/Attendance' },
           { component: MaterialIcons as unknown as IconComponentType, name: 'exit-to-app', label: 'Leave Request', routeName: 'Stack/LeaveRequest' },
           { component: FontAwesome as unknown as IconComponentType, name: 'bell', label: 'Notices', routeName: 'Stack/Notices' },
         ]}

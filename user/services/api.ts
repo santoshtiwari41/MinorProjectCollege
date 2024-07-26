@@ -66,10 +66,8 @@ interface PasswordChange{
 }
 
 const api = axios.create({
-  baseURL: 'http://192.168.1.3:4000',
+  baseURL: 'https://hamro-college-server.onrender.com',
 });
-
-
 
 
 export const studentRegister= async (studentData:StudentData) => {

@@ -1,96 +1,139 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import ProgressCircle from 'react-native-progress-circle';
+import { View, Text, StyleSheet, Dimensions, ScrollView } from 'react-native';
+import { ProgressBar } from 'react-native-paper';
+import { PieChart } from 'react-native-chart-kit';
 
-const Attendance = () => {
-  const attendanceData = [
-    { title: 'Total', days: 124, present: 124, absent: 124, percentage: 75 },
-    { title: 'Jestha', days: 124, present: 124, absent: 124, percentage: 75 },
-    { title: 'Baisakh', days: 124, present: 124, absent: 124, percentage: 75 },
+const { width } = Dimensions.get('window');
+
+const demoData = {
+  totalClasses: 30,
+  attendedClasses: 22,
+  missedClasses: 8,
+};
+
+const AttendanceScreen = () => {
+  const { totalClasses, attendedClasses, missedClasses } = demoData;
+  const attendancePercentage = (attendedClasses / totalClasses) * 100;
+
+  const pieChartData = [
+    {
+      name: 'Attended',
+      population: attendedClasses,
+      color: '#4CAF50',
+      legendFontColor: '#000',
+      legendFontSize: 15,
+    },
+    {
+      name: 'Missed',
+      population: missedClasses,
+      color: '#F44336',
+      legendFontColor: '#000',
+      legendFontSize: 15,
+    },
   ];
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.headerText}>Present Today</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <Text style={styles.title}>Attendance Progress</Text>
+      
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Total Classes</Text>
+        <Text style={styles.cardValue}>{totalClasses}</Text>
       </View>
-      {attendanceData.map((item, index) => (
-        <View key={index} style={styles.card}>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <View style={styles.cardContent}>
-            <View style={styles.textContainer}>
-              <Text style={styles.text}>Operating Days: {item.days}</Text>
-              <Text style={styles.text}>Present Days: {item.present}</Text>
-              <Text style={styles.text}>Absent Days: {item.absent}</Text>
-            </View>
-            <ProgressCircle
-              percent={item.percentage}
-              radius={40}
-              borderWidth={8}
-              color="#3b5998"
-              shadowColor="#e6e6e6"
-              bgColor="#fff"
-            >
-              <Text style={styles.percentageText}>{item.percentage}%</Text>
-            </ProgressCircle>
-          </View>
-        </View>
-      ))}
-      {/* Gradually uncomment this part to debug */}
-      {/* <Text>hello</Text> */}
+      
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Classes Attended</Text>
+        <Text style={styles.cardValue}>{attendedClasses}</Text>
+      </View>
+      
+      <View style={styles.card}>
+        <Text style={styles.cardTitle}>Classes Missed</Text>
+        <Text style={styles.cardValue}>{missedClasses}</Text>
+      </View>
+      
+      <View style={styles.chartContainer}>
+        <PieChart
+          data={pieChartData}
+          width={width - 40}
+          height={220}
+          chartConfig={{
+            color: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
+          }}
+          accessor="population"
+          backgroundColor="transparent"
+          paddingLeft="15"
+          absolute
+        />
+      </View>
+      
+      <View style={styles.progressContainer}>
+        <Text style={styles.progressTitle}>Attendance Progress</Text>
+        <ProgressBar
+          progress={attendancePercentage / 100}
+          color="#4CAF50"
+          style={styles.progressBar}
+        />
+        <Text style={styles.progressText}>
+          {attendancePercentage.toFixed(2)}% Attended
+        </Text>
+      </View>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  header: {
+    flexGrow: 1,
     padding: 20,
-    alignItems: 'center',
-    backgroundColor: '#6A0DAD',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    backgroundColor: '#E2E2E2',
   },
-  headerText: {
-    fontSize: 20,
-    color: 'white',
+  title: {
+    fontSize: 28,
     fontWeight: 'bold',
+    marginBottom: 20,
   },
   card: {
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
-    padding: 20,
-    margin: 10,
+    padding: 15,
+    marginBottom: 15,
+    elevation: 3,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowRadius: 5,
-    elevation: 5,
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  cardContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  textContainer: {
-    flex: 1,
-  },
-  text: {
-    fontSize: 16,
     marginBottom: 5,
   },
-  percentageText: {
-    fontSize: 16,
+  cardValue: {
+    fontSize: 22,
+    color: '#333',
+  },
+  chartContainer: {
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  progressContainer: {
+    marginTop: 20,
+    alignItems: 'center',
+  },
+  progressTitle: {
+    fontSize: 18,
     fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  progressBar: {
+    width: '100%',
+    height: 10,
+    borderRadius: 5,
+  },
+  progressText: {
+    marginTop: 5,
+    fontSize: 16,
+    color: '#333',
   },
 });
 
-export default Attendance;
+export default AttendanceScreen;

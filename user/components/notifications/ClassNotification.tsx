@@ -5,7 +5,8 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { useQuery } from '@tanstack/react-query';
 import { getNotificationByBatch } from '@/services/api';
-
+import { Dimensions } from 'react-native';
+const { width } = Dimensions.get('window');
 interface Notification {
   id: number;
   title: string;
@@ -86,6 +87,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#E2E2E2',
+    width:width
   },
   notificationItem: {
     flexDirection: 'row',
