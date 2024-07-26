@@ -6,7 +6,6 @@ import config from "../configs/constants";
 
 export interface AuthRequest extends Request {
   userId: string;
-  role: string;
 }
 
 const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
@@ -17,8 +16,8 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
   try {
     const decoded = jwt.verify(token, config.jwtSecret);
-    const _req = req as AuthRequest;
-    _req.userId = decoded.sub as string;
+    // @ts-ignore
+    req.userId = decoded.id;
     next();
   } catch (error) {
     return next(createHttpError(401, "Token is expired"));

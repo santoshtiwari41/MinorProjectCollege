@@ -9,7 +9,7 @@ import { generateCredentials } from "./admin.services";
 class AdminController {
   registerStudent = async (req: Request, res: Response, next: NextFunction) => {
     const { name, email, phone, batchId } = req.body;
-    const BatchId = parseInt(batchId);
+
     const batch = await prisma.batch.findFirst({
       where: { id: parseInt(batchId) },
       include: { department: true },
@@ -45,7 +45,7 @@ class AdminController {
         email,
         password: hash,
         crn: parseInt(crn),
-        batchId: BatchId,
+        batchId: parseInt(batchId),
       },
     });
 

@@ -2,8 +2,6 @@
 // ADMIN STUDENT CREATE -> email (email, password)
 ```
 
-...
-
 ```js
 // STUDENT LOGIN (email, password)
 ```
@@ -22,3 +20,9 @@
 - Department to Event: One department can have many events, but each event belongs to one department.
 
 <!-- TODO RATE LIMITING -->
+
+## IMAGE URL
+
+> ```sh
+> http://localhost:4000/public/1722002059884.png
+> ```

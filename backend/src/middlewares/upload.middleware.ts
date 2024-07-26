@@ -1,16 +1,16 @@
 import multer from "multer";
+import path from "node:path";
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./public");
+  destination: (req, file, cb) => {
+    cb(null, "public/");
   },
-  filename: function (req, file, cb) {
-    cb(null, file.originalname);
+  filename: (req, file, cb) => {
+    const uniqueName = Date.now() + path.extname(file.originalname);
+    cb(null, uniqueName);
   },
 });
 
-const uploadMiddleware = multer({
-  storage,
-});
+const uploadMiddleware = multer({ storage });
 
 export default uploadMiddleware;

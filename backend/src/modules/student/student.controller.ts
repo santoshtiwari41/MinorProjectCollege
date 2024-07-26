@@ -31,7 +31,7 @@ class StudentController {
         select: {
           batch: {
             select: {
-              id:true,
+              id: true,
               name: true,
               startYear: true,
               endYear: true,
@@ -66,6 +66,24 @@ class StudentController {
         createHttpError(500, "Failed to fetch profile. Please try again later.")
       );
     }
+  };
+
+  uploadProfileImage = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    await prisma.profile.create({
+      data: {
+        image: req.file?.filename,
+        // @ts-ignore
+        student: { connect: { id: parseInt(req.userId) } },
+      },
+    });
+
+    return res.json({
+      message: "SUCCESS",
+    });
   };
 }
 
