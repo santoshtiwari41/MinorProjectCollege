@@ -59,15 +59,15 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
         sidebarOpen ? 'translate-x-0' : '-translate-x-full'
       }`}
     >
-      <div className="flex items-center px-6 py-2">
+      <div className="flex items-center px-4 py-2">
         <NavLink to="#" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          <img src={Logo2} alt="Logo" />
+          <img src={Logo2} alt="Logo" className="w-30 h-auto" /> {/* Adjusted logo size */}
         </NavLink>
       </div>
 
       <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
         <nav className="py-2 px-4 lg:py-4 lg:px-6">
-          <ul className="flex flex-col gap-2">
+          <ul className="flex flex-col gap-3 mt-0"> 
             <li>
               <NavLink
                 to="/"

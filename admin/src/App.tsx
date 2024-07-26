@@ -51,7 +51,7 @@ if(isLoading){
           index
           element={
             <>
-              <PageTitle title="Homepage" />
+              <PageTitle title="Hamro College" />
               <Home />
             </>
           }
@@ -69,7 +69,7 @@ if(isLoading){
           path="/calendar/event"
           element={
             <>
-              <PageTitle title="Calendar " />
+              <PageTitle title="Calendar | Event " />
              <Event />
             </>
           }
@@ -78,7 +78,7 @@ if(isLoading){
           path="/students/:batchId"
           element={
             <>
-              <PageTitle title="Students " />
+              <PageTitle title="Students | Batch" />
               <Students />
             </>
           }
@@ -87,7 +87,7 @@ if(isLoading){
           path="/teachers/:batchId"
           element={
             <>
-              <PageTitle title="Tables/Students | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Teacher |Batch" />
               <Students />
             </>
           }
@@ -97,7 +97,7 @@ if(isLoading){
           path="/students"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Students" />
               <StudentL />
             </>
           }
@@ -106,7 +106,7 @@ if(isLoading){
           path="/teachers"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Teacher" />
              <Teacher />
             </>
           }
@@ -115,7 +115,7 @@ if(isLoading){
           path="/batchs"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Batch" />
             <Batch />
             </>
           }
@@ -124,7 +124,7 @@ if(isLoading){
           path="/notification"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Notification" />
             <Notification />
             </>
           }
@@ -133,7 +133,7 @@ if(isLoading){
           path="/notification/department/:departId"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Notification | Department" />
             <DepartmentNotification />
             </>
           }
@@ -142,7 +142,7 @@ if(isLoading){
           path="/notification/batch/:batchId"
           element={
             <>
-              <PageTitle title="Signup | TailAdmin - Tailwind CSS Admin Dashboard Template" />
+              <PageTitle title="Notification | Batch" />
             <BatchNotification />
             </>
           }
