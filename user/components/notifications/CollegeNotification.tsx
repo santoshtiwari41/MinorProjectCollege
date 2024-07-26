@@ -7,7 +7,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { ActivityIndicator } from 'react-native-paper';
 import { useRouter } from 'expo-router';
+import { Dimensions } from 'react-native';
 
+const { width } = Dimensions.get('window');
 interface Notification {
   id: number;
   title: string;
@@ -94,6 +96,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 10,
     backgroundColor: '#E2E2E2',
+    width: width,
   },
   notificationItem: {
     flexDirection: 'row',

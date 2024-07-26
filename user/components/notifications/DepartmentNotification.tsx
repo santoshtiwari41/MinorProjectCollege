@@ -1,27 +1,17 @@
-import { StyleSheet, Text, View, Image } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { getNotificationByDepartment, getNotificationByStudent } from '@/services/api';
-import { useQuery } from '@tanstack/react-query';
-import { ActivityIndicator } from 'react-native-paper';
-import { FlatList, TouchableOpacity } from 'react-native-gesture-handler';
+import { getNotificationByDepartment } from '@/services/api';
 import { useRouter } from 'expo-router';
+import { Dimensions } from 'react-native';
 
+const { width } = Dimensions.get('window');
 interface Notification {
   id: number;
   title: string;
   body: string;
   image: string | null;
-  batchId: number | null;
-  departmentId: number | null;
-  createdAt: string;
-  scheduledTime: string;
-  studentId: number | null;
-  teacherId: number | null;
-  type: string;
-  updatedAt: string;
 }
 
 const DepartmentNotification = () => {
@@ -29,28 +19,28 @@ const DepartmentNotification = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { departmentId } = useSelector((state: RootState) => state.profile);
 
-  const { isLoading, isError, data } = useQuery({
-    queryKey: ['departNotification', departmentId],
-    queryFn: () => getNotificationByDepartment(departmentId),
-    enabled: !!departmentId,
-  });
+  useEffect(() => {
+    if (departmentId) {
+      const fetchNotifications = async () => {
+        try {
+          const data = await getNotificationByDepartment(departmentId);
+          setNotifications(data);
+        } catch (error) {
+          console.error('Error fetching notifications:', error);
+        }
+      };
+      fetchNotifications();
+    }
+  }, [departmentId]);
 
   const handlePress = (item: Notification) => {
-    console.log('this is from department notification', departmentId);
     router.push({
       pathname: `/ButtomTab/notification/${item.id}`,
       params: { title: item.title, description: item.body, imageUrl: item.image },
     });
   };
 
-  useEffect(() => {
-    if (data) {
-      console.log('Notification Data from department:', data);
-      setNotifications(data);
-    }
-  }, [data]);
-
-  if (isLoading) {
+  if (!notifications.length) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
@@ -58,17 +48,8 @@ const DepartmentNotification = () => {
     );
   }
 
-  if (isError) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error fetching notifications</Text>
-      </View>
-    );
-  }
-
   return (
     <View style={styles.container}>
-   
       <FlatList
         data={notifications}
         keyExtractor={(item) => item.id.toString()}
@@ -89,13 +70,11 @@ const DepartmentNotification = () => {
   );
 };
 
-export default DepartmentNotification;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: '#E2E2E2',
+    width: width,
   },
   notificationItem: {
     flexDirection: 'row',
@@ -117,10 +96,6 @@ const styles = StyleSheet.create({
   description: {
     fontFamily: 'Nunito-MediumItalic',
   },
-  loadingText: {
-    fontSize: 16,
-    color: 'grey',
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -136,3 +111,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
+
+export default DepartmentNotification;

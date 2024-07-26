@@ -17,6 +17,7 @@ class NotificationController {
     const depart = parseInt(departmentId);
     const notificationTime = scheduledTime + ':00.000Z';
     const notificationTimes = new Date(notificationTime);
+    const newNotification=new Date(Date.now() + 7*1000);
     let image;
 
     const data = {
@@ -46,11 +47,12 @@ class NotificationController {
       console.log('FCM Tokens:', tokens);
 
       if (tokens.length > 0) {
-        for (const token of tokens) {
-          scheduleNotification(title, body, data, notificationTimes, token);
-        }
+        const schedulingPromises = tokens.map(token => 
+          scheduleNotification(title, body, data, newNotification, token)
+        );
+        await Promise.all(schedulingPromises);
       }
-
+      
       return res.json({ message: "SUCCESS" });
     } catch (error) {
       console.error("Error creating notification:", error);

@@ -1,13 +1,10 @@
-// NotificationList.tsx
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TouchableOpacity, Image, StyleSheet, ActivityIndicator } from 'react-native';
 import { useRouter } from 'expo-router';
-
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { useQuery } from '@tanstack/react-query';
 import { getNotificationByBatch } from '@/services/api';
-import { ActivityIndicator } from 'react-native-paper';
 
 interface Notification {
   id: number;
@@ -24,18 +21,16 @@ interface Notification {
   updatedAt: string;
 }
 
-
-
-
-const NotificationList = () => {
+const ClassNotification = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const router = useRouter();
-  const {  batchId} = useSelector((state: RootState) => state.profile);  
+  const { batchId } = useSelector((state: RootState) => state.profile);  
   const { isLoading, isError, data } = useQuery({
-    queryKey: ['classNotification',batchId],
+    queryKey: ['classNotification', batchId],
     queryFn: () => getNotificationByBatch(batchId),
     enabled: !!batchId,
   });
+
   useEffect(() => {
     if (data) {
       setNotifications(data);
@@ -48,7 +43,7 @@ const NotificationList = () => {
       params: { title: item.title, description: item.body, imageUrl: item.image },
     });
   };
-  
+
   if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
@@ -60,36 +55,36 @@ const NotificationList = () => {
   if (isError) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>Error fetching profile</Text>
+        <Text style={styles.errorText}>Error fetching notifications</Text>
       </View>
     );
   }
+
   return (
     <View style={styles.container}>
-    <FlatList
-      data={notifications}
-      keyExtractor={(item) => item.id.toString()}
-      renderItem={({ item }) => (
-        <TouchableOpacity
-          style={styles.notificationItem}
-          onPress={() => handlePress(item)}
-        >
-          <Image source={{ uri: item.image ? item.image : 'https://via.placeholder.com/50' }} style={styles.image} />
-          <View>
-            <Text style={styles.title}>{item.title}</Text>
-            <Text style={styles.description}>{item.body}</Text>
-          </View>
-        </TouchableOpacity>
-      )}
-    />
-  </View>
+      <FlatList
+        data={notifications}
+        keyExtractor={(item) => item.id.toString()}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.notificationItem}
+            onPress={() => handlePress(item)}
+          >
+            <Image source={{ uri: item.image ? item.image : 'https://via.placeholder.com/50' }} style={styles.image} />
+            <View>
+              <Text style={styles.title}>{item.title}</Text>
+              <Text style={styles.description}>{item.body}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      />
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 10,
     backgroundColor: '#E2E2E2',
   },
   notificationItem: {
@@ -112,10 +107,6 @@ const styles = StyleSheet.create({
   description: {
     fontFamily: 'Nunito-MediumItalic',
   },
-  loadingText: {
-    fontSize: 16,
-    color: 'grey',
-  },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -131,4 +122,5 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
 });
-export default NotificationList;
+
+export default ClassNotification;
