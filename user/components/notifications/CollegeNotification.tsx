@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, Image, FlatList, Dimensions } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { useQuery } from '@tanstack/react-query';
 import { getNotificationByStudent } from '@/services/api';
@@ -7,9 +7,9 @@ import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { ActivityIndicator } from 'react-native-paper';
 import { useRouter } from 'expo-router';
-import { Dimensions } from 'react-native';
 
 const { width } = Dimensions.get('window');
+
 interface Notification {
   id: number;
   title: string;
@@ -28,10 +28,10 @@ interface Notification {
 const CollegeNotification: React.FC = () => {
   const router = useRouter();
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  const {departmentId, userId } = useSelector((state: RootState) => state.profile);
+  const { departmentId, userId } = useSelector((state: RootState) => state.profile);
 
   const { isLoading, isError, data } = useQuery({
-    queryKey: ['allNotification',userId],
+    queryKey: ['allNotification', userId],
     queryFn: () => getNotificationByStudent(userId),
     enabled: !!userId,
   });
@@ -39,7 +39,7 @@ const CollegeNotification: React.FC = () => {
   useEffect(() => {
     if (data) {
       console.log('Notification Data from college:', data);
-      setNotifications(data);
+      setNotifications(data.reverse());
     }
   }, [data]);
 

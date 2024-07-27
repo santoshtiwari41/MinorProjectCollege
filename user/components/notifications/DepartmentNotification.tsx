@@ -1,12 +1,13 @@
-import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity, ActivityIndicator, Dimensions } from 'react-native';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
 import { getNotificationByDepartment } from '@/services/api';
 import { useRouter } from 'expo-router';
-import { Dimensions } from 'react-native';
+import { useQuery } from '@tanstack/react-query';
 
 const { width } = Dimensions.get('window');
+
 interface Notification {
   id: number;
   title: string;
@@ -19,19 +20,17 @@ const DepartmentNotification = () => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const { departmentId } = useSelector((state: RootState) => state.profile);
 
+  const { isLoading, isError, data } = useQuery({
+    queryKey: ['departmentNotification', departmentId],
+    queryFn: () => getNotificationByDepartment(departmentId),
+    enabled: !!departmentId,
+  });
+
   useEffect(() => {
-    if (departmentId) {
-      const fetchNotifications = async () => {
-        try {
-          const data = await getNotificationByDepartment(departmentId);
-          setNotifications(data);
-        } catch (error) {
-          console.error('Error fetching notifications:', error);
-        }
-      };
-      fetchNotifications();
+    if (data) {
+      setNotifications(data.reverse());
     }
-  }, [departmentId]);
+  }, [data]);
 
   const handlePress = (item: Notification) => {
     router.push({
@@ -40,10 +39,18 @@ const DepartmentNotification = () => {
     });
   };
 
-  if (!notifications.length) {
+  if (isLoading) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.errorContainer}>
+        <Text style={styles.errorText}>Error fetching notifications</Text>
       </View>
     );
   }

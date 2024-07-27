@@ -35,7 +35,7 @@ const LogIn: React.FC<LogInProps> = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [rememberMe, setRememberMe] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>("false");
+  const [error, setError] = useState<boolean>(false);
   const [errorMessage, setErrorMessage] = useState("");
 
   notificationServices();
