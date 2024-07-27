@@ -1,7 +1,9 @@
 import React from 'react';
-import { View, ScrollView, StyleSheet, Text } from 'react-native';
+import { View, ScrollView, StyleSheet, Text, TouchableOpacity, StatusBar } from 'react-native';
 import { Card, Title, Chip, Divider } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
 const results = [
   {
@@ -33,8 +35,18 @@ const results = [
 ];
 
 const ResultPage = () => {
+  const router = useRouter();
+
+  const back = () => {
+    router.back();
+  };
+
   return (
     <LinearGradient colors={['#f0f4ff', '#d9e2ff']} style={styles.container}>
+     
+      <TouchableOpacity style={styles.backButton} onPress={back}>
+        <Ionicons name="arrow-back" size={30} color="#1A162B" />
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.scrollContainer}>
         {results.map((result, index) => (
           <Card style={styles.card} key={index}>
@@ -67,6 +79,14 @@ const ResultPage = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  backButton: {
+    position: 'fixed',
+    top: 40,
+    left: 20,
+    marginBottom: 30,
+   
+    zIndex: 1, // Ensure the back button is above other content
   },
   scrollContainer: {
     padding: 15,
