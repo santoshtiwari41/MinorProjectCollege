@@ -5,13 +5,16 @@ import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from '@expo/vector-icons'; 
 import { useRouter } from 'expo-router';
 import { useSelector } from 'react-redux';
-import { removeData } from '@/services/asyncStorage';
+import { getData, removeData } from '@/services/asyncStorage';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { Asset } from 'expo-asset';
 import { RootState } from '@/redux/store';
 import { Colors } from '@/constants/Colors';
+import { useMutation } from '@tanstack/react-query';
+import { profilePicture } from '@/services/api';
 
-// Static image asset
+
+
 const staticimg = Asset.fromModule(require("../../../../assets/images/placeholder.png")).uri;
 
 const ProfileScreen: React.FC = () => {
@@ -20,21 +23,47 @@ const ProfileScreen: React.FC = () => {
 
   const router = useRouter();
 
-  const selectImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      alert("Sorry, we need camera roll permissions to make this work!");
+  const mutation = useMutation({
+    mutationFn: async (formData: FormData) => {
+      return await profilePicture(formData); 
+    },
+    onSuccess: () => {
+      alert('Profile picture updated successfully!');
+    },
+    onError: (error) => {
+      console.error('Error uploading profile picture:', error);
+      alert('Failed to upload profile picture.');
+    }
+  });
+  const pickImage = async () => {
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (permissionResult.granted === false) {
+      alert('Permission to access camera roll is required!');
       return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
+      aspect: [4, 3],
       quality: 1,
     });
 
-    if (!result.cancelled) {
-      setImageUri(result.uri); // Set the image URI
+    if (!result.canceled) {
+      const selectedAsset = result.assets[0];
+      console.log(selectedAsset);
+
+      setImageUri(selectedAsset.uri);
+
+      const formData = new FormData();
+      formData.append('profile', {
+        uri: selectedAsset.uri,
+        name: selectedAsset.fileName || 'profile.jpg',
+        type: selectedAsset.mimeType || 'image/jpeg',
+      } as unknown as Blob); 
+
+      mutation.mutate(formData);
     }
   };
 
@@ -47,15 +76,14 @@ const ProfileScreen: React.FC = () => {
     <ScrollView contentContainerStyle={styles.container}>
       <View style={{ backgroundColor: Colors.button, height: hp('5%') }}></View>
       <View style={styles.header}>
-        <TouchableOpacity onPress={selectImage}>
-           <View style={styles.imageContainer}>
-              {imageUri ? (
-                <Image source={{ uri: imageUri }} style={styles.image} />
-              ) : (
-                <Image source={{ uri: staticimg }} style={styles.image} />
-              )}
-              <MaterialIcons name="photo-camera" size={50} color="#FFF" style={styles.camera} />
-         
+        <TouchableOpacity onPress={pickImage}>
+          <View style={styles.imageContainer}>
+            {imageUri ? (
+              <Image source={{ uri: imageUri }} style={styles.image} />
+            ) : (
+              <Image source={{ uri: staticimg }} style={styles.image} />
+            )}
+            <MaterialIcons name="photo-camera" size={50} color="#FFF" style={styles.camera} />
           </View>
         </TouchableOpacity>
         <Title style={styles.title}>{profile?.name || 'Loading...'}</Title>

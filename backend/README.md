@@ -24,5 +24,5 @@
 ## IMAGE URL
 
 > ```sh
-> http://localhost:4000/public/1722002059884.png
+> https://hamro-college-server.onrender.com/public/1722002059884.png
 > ```

@@ -7,14 +7,15 @@ import moment from "moment";
 import SelectDay from "@/components/selectDay";
 
 import {useQuery } from "@tanstack/react-query";
-import { receiveCaledarEvent } from "@/services/api";
+import {receiveCalendarEvent } from "@/services/api";
+
 import { convertEvents } from "@/data/demoe";
 
 const CalendarComponent = () => {
   const [events, setEvents] = useState<any[]>([]);
   const { isLoading, error, data } = useQuery({
     queryKey: ["calendarkey"],
-    queryFn: receiveCaledarEvent,
+    queryFn: receiveCalendarEvent,
   });
 
   useEffect(() => {

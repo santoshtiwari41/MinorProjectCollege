@@ -4,8 +4,8 @@ import {
   Text,
   StyleSheet,
   ActivityIndicator,
+  Image,
 } from "react-native";
-import { Image } from "react-native";
 import { Asset } from "expo-asset";
 import { useQuery } from "@tanstack/react-query";
 import { getProfile } from "@/services/api";
@@ -13,7 +13,6 @@ import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from "react-native-responsive-screen";
-
 import {
   setUserId,
   setBatchId,
@@ -27,15 +26,17 @@ import notificationServices from "@/services/notificationServices";
 import Items from "@/components/home/Items";
 import Carousle from "@/components/home/carousle";
 
+const baseUrl = "https://hamro-college-server.onrender.com/public/profile.";
+const logo = Asset.fromModule(require("../../../../assets/images/logo3.png"));
+
 const HomeScreen: React.FC = () => {
-  const logo = Asset.fromModule(require("../../../../assets/images/logo3.png"));
   const [userID, setUserID] = useState<string | null>(null);
   const dispatch = useDispatch();
   const [userInitials, setUserInitials] = useState<string>("");
   const [greeting, setGreeting] = useState<string>("");
-  notificationServices()
+  notificationServices();
+
   useEffect(() => {
-    
     const fetchUserId = async () => {
       const data = await getUserId();
       if (typeof data === "string") {
@@ -103,6 +104,10 @@ const HomeScreen: React.FC = () => {
     );
   }
 
+  const profileImageUrl = data?.image
+    ? `${baseUrl}/${data.image}`
+    : "";
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -123,9 +128,9 @@ const HomeScreen: React.FC = () => {
         </View>
         <View style={styles.profile}>
           <View style={styles.image}>
-            {data && data.profile && data.profile.photoUrl ? (
+            {profileImageUrl ? (
               <Image
-                source={{ uri: data.profile.photoUrl }}
+                source={{ uri: profileImageUrl }}
                 style={styles.userPhoto}
                 resizeMode="cover"
               />
@@ -157,7 +162,7 @@ const HomeScreen: React.FC = () => {
         </View>
       </View>
       <View style={styles.carousel}>
-       <Carousle />
+        <Carousle />
       </View>
       <View style={styles.contents}>
         <Items />
@@ -229,7 +234,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   carousel: {
-    flex: 1,  
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },

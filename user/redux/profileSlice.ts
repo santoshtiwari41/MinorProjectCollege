@@ -9,6 +9,7 @@ interface ProfileState {
     email: string;
     crn: number;
     phone: string;
+    image?: string;
     batch: {
       id: number;
       name: string;
@@ -27,6 +28,7 @@ const initialState: ProfileState = {
   batchId: null,
   departmentId: null,
   profile: null,
+ 
 };
 
 const profileSlice = createSlice({

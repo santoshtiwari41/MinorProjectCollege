@@ -1,147 +1,158 @@
 import axios from 'axios';
-
+import { getData } from './asyncStorage';
 export interface StudentData {
   name: string;
   email: string;
   phone: string;
   batchId: string;
-  
 }
-export interface Credentials{
+
+export interface Credentials {
   email: string;
   password: string;
-  expoPushToken:string;
+  expoPushToken: string;
 }
-export interface Notification{
+
+export interface Notification {
   title: string;
   description: string;
   scheduledDate: string;
   imageUri: string;
 }
-export interface BatchNotification{
+
+export interface BatchNotification {
   type: string;
   batchId: string;
   title: string;
   body: string;
   scheduledTime: string;
- 
 }
 
-export interface DepartmentNotification{
+export interface DepartmentNotification {
   type: string;
   departmentId: string;
   title: string;
   body: string;
   scheduledTime: string;
 }
-export interface AllNotification{
+
+export interface AllNotification {
   type: string;
   title: string;
   body: string;
   scheduledTime: string;
 }
-export interface Calendar{
+
+export interface Calendar {
   title: string;
   startTime: string;
   endTime: string;
   description: string;
-  holiday:boolean
+  holiday: boolean;
 }
-interface Batch{
+
+interface Batch {
   name: string;
   startYear: number;
   endYear: number;
   departmentId: number;
 }
 
-interface Otp{
+interface Otp {
   email: string;
 }
-interface OtpVerify{
-  otp:string;
+
+interface OtpVerify {
+  otp: string;
 }
-interface PasswordChange{
+
+interface PasswordChange {
   password: string;
-  email:string;
+  email: string;
+}
+
+interface ProfilePic {
+  image: string;
 }
 
 const api = axios.create({
   baseURL: 'https://hamro-college-server.onrender.com',
 });
 
+export const studentRegister = async (studentData: StudentData) => {
+  return await api.post('/admin/student/register', studentData);
+};
 
-export const studentRegister= async (studentData:StudentData) => {
-  return await api.post('/admin/student/register', studentData)
-}
+export const studentLogin = async (credentials: Credentials) => {
+  return await api.post('/auth/student/login', credentials);
+};
 
-export const studentLogin= async(credentials:Credentials) => {
-  return await api.post('/auth/student/login', credentials)
-}
+export const sendNotification = async (notification: Notification) => {
+  return await api.post('/api/sendNotification', notification);
+};
 
-export const sendNotification=async (notification:Notification) => {
-  return await api.post('/api/sendNotification', notification)
-}
+export const sendCalendarEvent = async (calendar: Calendar) => {
+  return await api.post('/events', calendar);
+};
 
-export const sendCalendarEvent= async (calendar:Calendar) => {
-  return await api.post('/events', calendar)
-}
+export const receiveCalendarEvent = async () => {
+  return await api.get('/events');
+};
 
-export const receiveCaledarEvent= async() => {
-  return await api.get('/events')
+export const createBatch = async (batch: Batch) => {
+  return await api.post('/batchs', batch);
+};
 
-}
-export const createBatch= async(batch:Batch) => {
-  return await api.post('/batchs', batch)
-}
-export const getBatchs= async() => {
-  return await api.get('/batchs')
-}
+export const getBatches = async () => {
+  return await api.get('/batchs');
+};
 
-export const getOtp= async(otp:Otp) => {
-  return await api.post('/auth/otp', otp)
-}
+export const getOtp = async (otp: Otp) => {
+  return await api.post('/auth/otp', otp);
+};
 
-export const sendNotificationBatch= async(notification:BatchNotification) => {
-  return await api.post('/notifications', notification)
-}
+export const sendNotificationBatch = async (notification: BatchNotification) => {
+  return await api.post('/notifications', notification);
+};
 
-export const sendNotificationDepartment= async(notification:DepartmentNotification) => {
-  return await api.post('/notifications', notification)
-}
+export const sendNotificationDepartment = async (notification: DepartmentNotification) => {
+  return await api.post('/notifications', notification);
+};
 
-export const sendNotificationAll= async(notification:AllNotification) => {
-  return await api.post('/notifications', notification)
-}
-export const getProfile= async(id:string) => {
+export const sendNotificationAll = async (notification: AllNotification) => {
+  return await api.post('/notifications', notification);
+};
+
+export const getProfile = async (id: string) => {
   const response = await api.get(`/students/profile?studentId=${id}`);
   return response.data;
-}
-export const getBatchId= async(id:string) => {
+};
+
+export const getBatchId = async (id: string) => {
   return await api.get(`/students/profile?studentId=${id}`);
-  
-}
+};
+
 export const getAllStudents = async (batchId: string) => {
   try {
     const response = await api.get(`/batchs/${batchId}/students`);
     return response.data;
   } catch (error) {
     console.error('Error fetching students:', error);
-    throw error; 
+    throw error;
   }
 };
 
-export const verifyOtp= async(otp:OtpVerify) => {
-  return await api.post('/auth/verify', otp)
-}
-export const changePassword= async(password:PasswordChange) => {
-  return await api.post('/auth/student/forgot-password', password)
-}
+export const verifyOtp = async (otp: OtpVerify) => {
+  return await api.post('/auth/verify', otp);
+};
 
-export const changePasswordWithoutReset= async(password:PasswordChange) => {
-  return await api.post('/student/change-password', password)
-}
+export const changePassword = async (password: PasswordChange) => {
+  return await api.post('/auth/student/forgot-password', password);
+};
 
-
+export const changePasswordWithoutReset = async (password: PasswordChange) => {
+  return await api.post('/student/change-password', password);
+};
 
 export const getNotificationByStudent = async (studentId: string) => {
   try {
@@ -149,24 +160,49 @@ export const getNotificationByStudent = async (studentId: string) => {
     return response.data;
   } catch (error) {
     console.error('Error fetching notification:', error);
-    throw error; 
+    throw error;
   }
 };
+
 export const getNotificationByBatch = async (batchId: string) => {
   try {
     const response = await api.get(`/notifications/batch?batchId=${batchId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching notification:', error);
-    throw error; 
+    throw error;
   }
 };
+
 export const getNotificationByDepartment = async (departId: string) => {
   try {
     const response = await api.get(`/notifications/department?departId=${departId}`);
     return response.data;
   } catch (error) {
     console.error('Error fetching notification:', error);
-    throw error; 
+    throw error;
+  }
+};
+
+
+
+
+export const profilePicture = async (formData: FormData) => {
+  const token = await getData(); 
+
+  try {
+    const response = await api.patch(
+      '/students/profile/image',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`, // Add the token to headers
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    throw error;
   }
 };
