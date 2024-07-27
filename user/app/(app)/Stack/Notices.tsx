@@ -1,14 +1,82 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import React from "react";
+import { View, Text, StyleSheet, Image, StatusBar } from "react-native";
+import { LinearGradient } from "expo-linear-gradient";
+import { Asset } from "expo-asset";
+import { useFonts } from "expo-font";
 
-const Notices = () => {
+const ComingSoonScreen: React.FC = () => {
+  const [fontsLoaded] = useFonts({
+    'Nunito-Black': require('../../../assets/fonts/Nunito-Black.ttf'),
+    'Nunito-Regular': require('../../../assets/fonts/Nunito-Regular.ttf'),
+  });
+
+  const image = Asset.fromModule(require('../../../assets/images/logo3.jpeg')).uri;
+
+  if (!fontsLoaded) {
+    return null; 
+  }
+
   return (
-    <View>
-      <Text>Notices</Text>
-    </View>
-  )
-}
+    <LinearGradient
+      colors={['#f0f4ff', '#d9e2ff']}
+      style={styles.container}
+    >
+      <StatusBar barStyle="light-content" />
+      <View style={styles.content}>
+        <Image
+          source={{ uri: image }}
+          style={styles.image}
+        />
+        <Text style={styles.title}>Coming Soon</Text>
+        <Text style={styles.description}>
+          We’re working hard on this feature. Stay tuned for updates!
+        </Text>
+        <Text style={styles.placeholder}>Stay Tuned!</Text>
+      </View>
+    </LinearGradient>
+  );
+};
 
-export default Notices
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  
+  },
+  content: {
+    alignItems: "center",
+    paddingHorizontal: 20,
+    backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background for content
+    borderRadius: 20,
+    paddingVertical: 30,
+    elevation: 5, 
+  },
+  image: {
+    width: 160,
+    height: 120,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 36,
+    fontFamily: "Nunito-Black",
+    color: "#333", 
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 18,
+    fontFamily: "Nunito-Regular",
+    color: "#555", // Slightly lighter text color for description
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  placeholder: {
+    fontSize: 16,
+    fontFamily: "Nunito-Regular",
+    color: "#777", 
+  },
+});
 
-const styles = StyleSheet.create({})
+export default ComingSoonScreen;
