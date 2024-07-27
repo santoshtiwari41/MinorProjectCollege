@@ -1,10 +1,18 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, StatusBar } from "react-native";
+import { View, Text, StyleSheet, Image, StatusBar, TouchableOpacity } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { Asset } from "expo-asset";
 import { useFonts } from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 const ComingSoonScreen: React.FC = () => {
+  const router = useRouter();
+
+  const back = () => {
+    router.back();
+  };
+
   const [fontsLoaded] = useFonts({
     'Nunito-Black': require('../../../assets/fonts/Nunito-Black.ttf'),
     'Nunito-Regular': require('../../../assets/fonts/Nunito-Regular.ttf'),
@@ -21,7 +29,10 @@ const ComingSoonScreen: React.FC = () => {
       colors={['#f0f4ff', '#d9e2ff']}
       style={styles.container}
     >
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
+      <TouchableOpacity style={styles.backButton} onPress={back}>
+        <Ionicons name="arrow-back" size={30} color="#1A162B" />
+      </TouchableOpacity>
       <View style={styles.content}>
         <Image
           source={{ uri: image }}
@@ -43,7 +54,12 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 20,
-  
+  },
+  backButton: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1, // Ensure the back button is above other content
   },
   content: {
     alignItems: "center",
@@ -51,7 +67,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(255, 255, 255, 0.8)', // Semi-transparent white background for content
     borderRadius: 20,
     paddingVertical: 30,
-    elevation: 5, 
+    elevation: 5,
   },
   image: {
     width: 160,
@@ -62,7 +78,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 36,
     fontFamily: "Nunito-Black",
-    color: "#333", 
+    color: "#333",
     marginBottom: 10,
   },
   description: {
@@ -75,7 +91,7 @@ const styles = StyleSheet.create({
   placeholder: {
     fontSize: 16,
     fontFamily: "Nunito-Regular",
-    color: "#777", 
+    color: "#777",
   },
 });
 
