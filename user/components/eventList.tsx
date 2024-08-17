@@ -51,7 +51,7 @@ const EventList: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      setEvents(convertEvents(data.data));
+      setEvents(convertEvents(data.data).reverse());
     }
   }, [data]);
 

@@ -9,7 +9,7 @@ interface ProfileState {
     email: string;
     crn: number;
     phone: string;
-    image?: string;
+  
     batch: {
       id: number;
       name: string;
@@ -20,6 +20,9 @@ interface ProfileState {
         name: string;
       };
     };
+    profile:{
+      image?:string;
+    }
   } | null;
 }
 

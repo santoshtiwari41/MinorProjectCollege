@@ -38,13 +38,13 @@ const CollegeNotification: React.FC = () => {
 
   useEffect(() => {
     if (data) {
-      console.log('Notification Data from college:', data);
+      
       setNotifications(data.reverse());
     }
   }, [data]);
 
   const handlePress = (item: Notification) => {
-    console.log('this is from department notification', departmentId);
+    
     router.push({
       pathname: `/ButtomTab/notification/${item.id}`,
       params: { title: item.title, description: item.body, imageUrl: item.image },

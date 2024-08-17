@@ -26,7 +26,7 @@ import notificationServices from "@/services/notificationServices";
 import Items from "@/components/home/Items";
 import Carousle from "@/components/home/carousle";
 
-const baseUrl = "https://hamro-college-server.onrender.com/public/profile.";
+const baseUrl = "https://hamro-college-server.onrender.com/public/";
 const logo = Asset.fromModule(require("../../../../assets/images/logo3.png"));
 
 const HomeScreen: React.FC = () => {
@@ -34,6 +34,7 @@ const HomeScreen: React.FC = () => {
   const dispatch = useDispatch();
   const [userInitials, setUserInitials] = useState<string>("");
   const [greeting, setGreeting] = useState<string>("");
+  const [profileImage, setProfileImage] = useState<string>("");
   notificationServices();
 
   useEffect(() => {
@@ -68,6 +69,7 @@ const HomeScreen: React.FC = () => {
 
   useEffect(() => {
     if (data) {
+      setProfileImage(data.profile?.image);
       dispatch(setProfile(data));
       dispatch(setBatchId(data.batch ? data.batch.id : null));
       dispatch(
@@ -104,10 +106,6 @@ const HomeScreen: React.FC = () => {
     );
   }
 
-  const profileImageUrl = data?.image
-    ? `${baseUrl}/${data.image}`
-    : "";
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -128,9 +126,9 @@ const HomeScreen: React.FC = () => {
         </View>
         <View style={styles.profile}>
           <View style={styles.image}>
-            {profileImageUrl ? (
+            {profileImage ? (
               <Image
-                source={{ uri: profileImageUrl }}
+                source={{ uri: `https://hamro-college-server.onrender.com/public/${profileImage}`}}
                 style={styles.userPhoto}
                 resizeMode="cover"
               />
@@ -155,7 +153,7 @@ const HomeScreen: React.FC = () => {
                 Roll: {data?.crn}
               </Text>
               <Text style={{ fontFamily: "Nunito-Bold", color: Colors.text }}>
-                , Batch: {data?.batch.name}
+                , Batch: {data?.batch?.name || "N/A"}
               </Text>
             </View>
           </View>

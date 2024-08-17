@@ -76,7 +76,7 @@ interface ProfilePic {
 }
 
 const api = axios.create({
-  baseURL: 'https://hamro-college-server.onrender.com',
+  baseURL: 'http://192.168.1.5:4000',
 });
 
 export const studentRegister = async (studentData: StudentData) => {

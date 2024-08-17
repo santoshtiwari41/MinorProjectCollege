@@ -51,7 +51,7 @@ interface Batch {
 }
 
 const api = axios.create({
-  baseURL: 'https://hamro-college-server.onrender.com',
+  baseURL: 'http://localhost:4000',
 });
 
 export const studentRegister = async (studentData: StudentData) => {
